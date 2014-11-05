@@ -1,0 +1,16 @@
+.align-center
+  - if title.present?
+    %h3= title
+  %canvas{ id: "#{wants}#{chart_type}Chart",
+           width: width,
+           height: height,
+           data: { url: query_data_customer_loyalty_queries_path(wants: wants,
+                                                                 from_date: params[:from_date],
+                                                                 to_date: params[:to_date],
+                                                                 query_type: query_type,
+                                                                 channel: params[:channel],
+                                                                 questioner_type: params[:questioner_type]),
+                   chart_type: chart_type,
+                   target: "#{wants}#{chart_type}Chart",
+                   references_target: "#{wants}ReferencesList" } }
+  %ul{ id: "#{wants}ReferencesList" }

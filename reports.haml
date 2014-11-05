@@ -1,0 +1,42 @@
+.tab-content= queries_subnav
+.well
+  = form_tag reports_customer_loyalty_queries_path, method: :get, class: 'form-inline' do
+    .pull-right= submit_tag 'Filtrar', name:  nil, class: 'button', data: { disable_with: 'Filtrando...' }, class: 'btn btn-info'
+    Entre
+    .input-prepend
+      %span.add-on
+        %i.icon-calendar
+      = text_field_tag :from_date, '', class: 'input-small text-field datepicker', value: (@from_date.strftime('%d/%m/%Y'))
+    y
+    .input-prepend
+      %span.add-on
+        %i.icon-calendar
+      = text_field_tag :to_date, '', class: 'input-small text-field datepicker', value: (@to_date.strftime('%d/%m/%Y'))
+    De
+    = select_tag 'questioner_type', options_for_select([['Todos', '']] + Query::QUESTIONER_TYPES.map { |x| [t("customer_loyalty.queries.#{x}"), x] }, @questioner_type)
+    Canal
+    = select_tag 'channel', options_for_select([['Todos', '']] + Query::CHANNELS.map { |x| [t("customer_loyalty.queries.#{x}"), x] }, @channel)
+  .clearfix
+%p
+  %strong
+    Total de consultas:
+  = @total_queries
+.well.well-white
+  .span5
+    = render partial: 'statistics_graph', locals: { title: 'Canales Usados', chart_type: 'pie', wants: 'channels', query_type: '', width: '250px', height: '250px' }
+  .span5
+    = render partial: 'statistics_graph', locals: { title: 'Origen', chart_type: 'pie', wants: 'questioners', query_type: '', width: '250px', height: '250px' }
+  .clearfix
+
+.well.well-white
+  .span5
+    %h4= link_to('Ver variación de consultas', query_types_chart_customer_loyalty_queries_path(questioner_type: @questioner_type, channel: @channel, from_date: @from_date.to_param, to_date: @to_date.to_param, title: 'Tipos de Consulta', query_type: 'query', wants: 'query_by_date'), remote: true, data: { target: 'modal', modal: true })
+    = render partial: 'statistics_graph', locals: { title: 'Consultas', chart_type: 'polarArea', wants: 'query', query_type: 'query', width: '250px', height: '250px' }
+  .span5
+    %h4= link_to('Ver variación de reclamos', query_types_chart_customer_loyalty_queries_path(questioner_type: @questioner_type, channel: "#{@channel}", from_date: @from_date.to_param, to_date: @to_date.to_param, title: 'Tipos de Reclamos', query_type: 'claim', wants: 'claim_by_date'), remote: true, data: { target: 'modal', modal: true })
+    = render partial: 'statistics_graph', locals: { title: 'Reclamos', chart_type: 'polarArea', wants: 'claim', query_type: 'claim', width: '250px', height: '250px' }
+  .clearfix
+= content_for :js do
+  :javascript
+    chartUtils.init('[data-chart-type]')
+    setDatePicker();
